@@ -4,6 +4,8 @@ import com.amazonaws.services.dynamodbv2.model.Select;
 
 import com.frubana.operations.logistics.yms.yard.domain.Yard;
 
+import netscape.javascript.JSObject;
+
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -16,6 +18,7 @@ import org.springframework.boot.autoconfigure.integration.IntegrationProperties.
 import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -54,12 +57,12 @@ public class YardRepository {
 	}
 
 	public List<Yard> listByWarehouse(String warehouse) {
-		String sql_query = "select * from yard as y where y.warehouse='guarejous'";
-
-		Object[] args = { "guarejous" };
-		List<Yard> listaYards = template.query(sql_query, BeanPropertyRowMapper.newInstance(Yard.class));
-		System.out.println(listaYards.get(0).getColor());
-		return template.query(sql_query, BeanPropertyRowMapper.newInstance(Yard.class));
+		String sql_query = "select id,color from yard where warehouse=?";
+		Object[] args = { warehouse };
+		List<Yard> listaYards = template.query(sql_query, args,
+				(result, rowNum) -> new Yard(result.getInt("id"), result.getString("color"), 1));
+		System.out.println(listaYards.get(0).getColor() + " " + listaYards.size());
+		return listaYards;
 	}
 
 	/**

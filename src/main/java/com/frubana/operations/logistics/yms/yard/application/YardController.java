@@ -164,6 +164,6 @@ public class YardController {
                             "The warehouse cannot be null or empty"));
         }
 
-        return status(HttpStatus.NO_CONTENT).body(yardService.searchByWarehouse(warehouse));
+        return status(HttpStatus.ACCEPTED).body(yardService.searchByWarehouse(warehouse));
     }
 }
